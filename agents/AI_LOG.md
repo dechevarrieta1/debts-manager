@@ -31,3 +31,17 @@ Segundo update:
 - Tuve que modificar salida del agente a nivel de gestor de bases de datos, dado que la primera salida generada tenia una orientacion generalista para un contexto que definimos cerrado.
 - Se cambiaron ciertas columnas para manejar enums en vez de textos para asegurar integridad referencial y evitar errores de tipeo.
 - No definí usar tablas intermedias para los mismos debido a que considero que es innecesario y lo volvería mas complejo de mantener y entender para el desarrollador y alcance que definimos.
+
+## [2026-06-11] Infraestructura y Dockerización Universal (MVP)
+**Agente:** Antigravity (Actuando como Infra Manager)
+**Acción Realizada:**
+- Creación de archivos `docker-compose` separados para 3 entornos: `dev` (con mapeo de puertos locales), `test` (efímero) y `prod` (seguro, sin puertos expuestos), enfocados *únicamente* en la orquestación de la base de datos por ahora.
+- Centralización de variables sensibles en `.env.example`.
+- Configuración de la base de datos para auto-iniciar el esquema `schema.sql` usando `/docker-entrypoint-initdb.d/`.
+- Creación del `README.md` en la carpeta `infrastructure` con instrucciones precisas para levantar la base de datos.
+*(Nota: La dockerización del Frontend y Backend se pospuso hasta tener sus definiciones técnicas cerradas).*
+
+**Reflexión del Desarrollador:**
+- Me parece correcto el uso de ciertos puntos dentro de los dockerfiles como los ambientes, por lo general no suelo utilizar los healtchecks TAN FUERTEMENTE y menos en ambientes pre-productivos cada 5 segundos, pero los vamos a dejar asi por ahora.
+- Otra observacion es que me parece super correcto el no exponer puerto hacia fuera del docker de prod.
+- Si tuve que pararlo en la parte de generacion de los dockerfiles para front y back debido a que aun no definimos ciertas cosas como herramientas de gestion de dependencias, librerias core, etc. 
