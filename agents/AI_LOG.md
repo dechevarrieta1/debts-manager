@@ -16,3 +16,18 @@ El dia de hoy dejamos como supuestos varios puntos de valor importantes:
 - Definimos un modelo de datos relacional que permite la interacción entre clientes, facturas y gestiones, con 3 tablas principales.
 - Definimos las reglas de negocio para la segmentación de clientes en 4 categorías (Zombis, Startups, Grandes, Estándar) y las prioridades asociadas.
 - Definimos un flujo de trabajo simple para el triaje de clientes y la gestión de cobranzas, con 3 historias de usuario principales.
+
+## [2026-06-11] Diseño de Base de Datos y Normalización (MVP)
+**Agente:** Antigravity (Actuando como Database Architect)
+**Acción Realizada:**
+- Diseño del esquema relacional en 3NF focalizado en `clients`, `invoices` y `collection_actions`.
+- Generación del diagrama visual en sintaxis `dbdiagram.io`.
+- Creación del Diccionario de Datos base definiendo tipos estrictos (UUIDs, `NUMERIC` para montos, `TIMESTAMPTZ` para fechas) y refinado con tipos `ENUM` (`segment_type`, `service_status_type`, `invoice_status_type`) en minúsculas por decisión técnica.
+- Generación de script DDL con índices optimizados para las consultas de triaje y estados de deuda.
+- Creacion de carpeta infraestructure con los diagramas y script DDL.
+
+**Reflexión del Desarrollador:**
+Segundo update:
+- Tuve que modificar salida del agente a nivel de gestor de bases de datos, dado que la primera salida generada tenia una orientacion generalista para un contexto que definimos cerrado.
+- Se cambiaron ciertas columnas para manejar enums en vez de textos para asegurar integridad referencial y evitar errores de tipeo.
+- No definí usar tablas intermedias para los mismos debido a que considero que es innecesario y lo volvería mas complejo de mantener y entender para el desarrollador y alcance que definimos.

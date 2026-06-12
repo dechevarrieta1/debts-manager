@@ -1,0 +1,46 @@
+Enum segment_type {
+  zombi
+  startup
+  grande
+  estandar
+}
+
+Enum service_status_type {
+  activo
+  suspendido
+  cancelado
+}
+
+Enum invoice_status_type {
+  pagada
+  pendiente
+  vencida
+  anulada
+}
+
+Table clients {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  name varchar(255) [not null]
+  segment segment_type [not null, default: 'estandar']
+  service_status service_status_type [not null, default: 'activo']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+}
+
+Table invoices {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  client_id uuid [ref: > clients.id, not null]
+  amount numeric(12,2) [not null]
+  due_date date [not null]
+  status invoice_status_type [not null, default: 'pendiente']
+  created_at timestamptz [default: `now()`]
+}
+
+Table collection_actions {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  client_id uuid [ref: > clients.id, not null]
+  collection_status varchar(50) [not null]
+  note text
+  action_date timestamptz [default: `now()`, not null]
+  promise_date date
+}
