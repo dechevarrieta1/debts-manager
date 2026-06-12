@@ -45,3 +45,17 @@ Segundo update:
 - Me parece correcto el uso de ciertos puntos dentro de los dockerfiles como los ambientes, por lo general no suelo utilizar los healtchecks TAN FUERTEMENTE y menos en ambientes pre-productivos cada 5 segundos, pero los vamos a dejar asi por ahora.
 - Otra observacion es que me parece super correcto el no exponer puerto hacia fuera del docker de prod.
 - Si tuve que pararlo en la parte de generacion de los dockerfiles para front y back debido a que aun no definimos ciertas cosas como herramientas de gestion de dependencias, librerias core, etc. 
+
+
+## [2026-06-11] Generación de Seed Data (MVP)
+**Agente:** Antigravity (Actuando como Infra Manager / DB Architect)
+**Acción Realizada:**
+- Creación de `seeds.sql` utilizando un bloque PL/pgSQL anónimo para generar los 420 clientes sintéticos.
+- Se introdujeron casos deterministas ("Corp Zombi 1", "FastTech Startup", etc.) para verificar visualmente que las reglas de negocio del dashboard aplican correctamente.
+- Se implementó distribución estadística (función `random()`) simulando el 14% de mora objetivo de la prueba.
+- Modificación de `docker-compose.dev.yml` para mapear los volúmenes en orden numérico (`1_schema.sql` y `2_seeds.sql`), garantizando ejecución en secuencia al iniciar el entorno de desarrollo limpio.
+
+**Reflexión del Desarrollador:**
+- Tuve que generar una iteracion extra debido a que no pudo con la instruccion de generar el seed.
+
+
