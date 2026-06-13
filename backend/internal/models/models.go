@@ -20,19 +20,17 @@ const (
 )
 
 type Client struct {
-	ID            string        `json:"id"`
-	Name          string        `json:"name"`
-	Segment       SegmentType   `json:"segment"`
-	ServiceStatus ServiceStatus `json:"service_status"`
-	CreatedAt     time.Time     `json:"created_at"`
-	UpdatedAt     time.Time     `json:"updated_at"`
-
-	// Virtual fields for Triage Dashboard
-	TotalDebt        float64    `json:"total_debt"`
-	MaxDaysOverdue   int        `json:"max_days_overdue"`
-	LatestAction     string     `json:"latest_action,omitempty"`
-	LatestActionDate *time.Time `json:"latest_action_date,omitempty"`
-	Priority         int        `json:"priority"` // 1: Critical, 2: High, 3: Medium, 4: Low
+	ID               string        `json:"id"`
+	Name             string        `json:"name"`
+	Segment          SegmentType   `json:"segment"`
+	ServiceStatus    ServiceStatus `json:"service_status"`
+	CreatedAt        time.Time     `json:"created_at"`
+	UpdatedAt        time.Time     `json:"updated_at"`
+	TotalDebt        float64       `json:"total_debt"`
+	MaxDaysOverdue   int           `json:"max_days_overdue"`
+	LatestAction     string        `json:"latest_action,omitempty"`
+	LatestActionDate *time.Time    `json:"latest_action_date,omitempty"`
+	Priority         int           `json:"priority"`
 }
 
 type CollectionAction struct {

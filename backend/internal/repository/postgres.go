@@ -15,7 +15,6 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-// GetClientsWithDebt fetches clients that have pending debts
 func (r *Repository) GetClientsWithDebt() ([]models.Client, error) {
 	query := `
 		SELECT 
