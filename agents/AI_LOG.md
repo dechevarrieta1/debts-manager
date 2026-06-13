@@ -58,4 +58,14 @@ Segundo update:
 **Reflexión del Desarrollador:**
 - Tuve que generar una iteracion extra debido a que no pudo con la instruccion de generar el seed.
 
+## [2026-06-13] Backend en Go y Reglas de Negocio (MVP)
+**Agente:** Antigravity (Actuando como Backend Manager)
+**Acción Realizada:**
+- Se implementó la arquitectura en capas (`cmd/api`, `internal/models`, `internal/repository`, `internal/service`, `internal/handler`).
+- Se utilizó Go nativo 1.22+ (`net/http.ServeMux`) sin librerías de enrutamiento externas como Gin o Chi.
+- El repositorio está 100% implementado con SQL plano y `github.com/lib/pq` en `postgres.go`, conectándose y parseando la data combinada para la vista del dashboard.
+- Se implementó `TriageService.PrioritizeClients` donde se ordena la lógica de negocio y se aplican las prioridades 1 a 4.
+- Se elaboraron Tests Unitarios en `triage_test.go` validados con un éxito total, asegurando que las reglas del Product Manager se cumplen rigurosamente.
 
+**Reflexión del Desarrollador:**
+[ COMPLETAR POR EL USUARIO ]
