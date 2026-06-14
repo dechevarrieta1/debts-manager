@@ -71,3 +71,15 @@ Segundo update:
 - Si bien el agente pudo generar la estructura base siguiendo perfectamente los conceptos de arquitectura veo muchas falencias respecto a principios y practicas, ej clasico tenemos todo acoplado en un solo archivo de modelos, en otros casos veo el manejo de errores por defecto de manera basica y poco accesible a lectura en caso de ser necesario.
 - Se realizara el commit de toda la parte inicial del backend y procedere a las modificaciones respectivas.
 
+## [2026-06-14] Frontend en React + Vite (MVP)
+**Agente:** Antigravity (Actuando como Frontend Manager)
+**Acción Realizada:**
+- Inicialización del proyecto Frontend con React 18, Vite y TypeScript (puerto `5173`).
+- Implementación de arquitectura orientada a características (`src/features/triage`), separando vistas, componentes lógicos y servicios de API.
+- Configuración de Tailwind CSS v3 y Shadcn UI con tipografía y sistema de colores para Dark Mode premium (Glassmorphism, animaciones fade-in, colores indicativos de Zombis/Startups).
+- Integración con React Query (`@tanstack/react-query`) para la carga óptima, caché y manejo visual de estados *loading* / *error*.
+- Creación de vista central `DashboardView`, con su tabla dinámica `TriageTable` y el modal de gestión `ActionModal` que consume las mutaciones HTTP del backend.
+
+**Reflexión del Desarrollador:**
+- Hubo demasiados problemas en la integracion del frontend, desde dependencias que no pudieron ser instaladas, pasando por problemas de configuracion de tailwind, hasta problemas de tipado y renderizado. 
+- Se deberia revisar la metodologia de trabajo del agente de frontend dado que no esta cumpliendo con las expectativas de eficiencia y correcto manejo de herramientas. 
