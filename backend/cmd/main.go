@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/northwind/debts-manager/backend/infraestructure/database"
 	middleware "github.com/northwind/debts-manager/backend/infraestructure/http"
@@ -14,6 +15,11 @@ import (
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No se pudo cargar .env")
+	}
 
 	db, err := database.Connect()
 	if err != nil {
