@@ -109,3 +109,16 @@ Si deseas verificar la robustez de los componentes visuales e interactivos de la
    pnpm run test
    ```
 > Esto validará componentes críticos como el filtrado, los modals y la interacción simulada del usuario.
+
+
+> Por otro lado, para validar la lógica del negocio central en el servidor, el Backend incluye pruebas nativas de **Go**:
+
+1. Desde la carpeta `backend`, ejecuta los tests unitarios con:
+   ```bash
+   go test ./... -v
+   ```
+2. Para comprobar el porcentaje de cobertura de los tests en la lógica del sistema:
+   ```bash
+   go test ./... -cover
+   ```
+> Esto confirmará que la segmentación, agrupación de KPIs y priorización concurrente funcionen correctamente.
