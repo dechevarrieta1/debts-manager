@@ -83,3 +83,15 @@ Segundo update:
 **Reflexión del Desarrollador:**
 - Hubo demasiados problemas en la integracion del frontend, desde dependencias que no pudieron ser instaladas, pasando por problemas de configuracion de tailwind, hasta problemas de tipado y renderizado. 
 - Se deberia revisar la metodologia de trabajo del agente de frontend dado que no esta cumpliendo con las expectativas de eficiencia y correcto manejo de herramientas. 
+
+## [2026-06-15] Requerimientos: Notas y Dashboard
+**Agentes:** Antigravity (Actuando como Database Architect, Backend Manager y Frontend Manager)
+**Acción Realizada:**
+- **Database Architect:** Se actualizó `schema.sql` y `schema.dbml` incorporando la tabla `client_notes` (relación 1:N) e introduciendo índices de performance (`idx_invoices_status_amount` con cláusula `INCLUDE` y `idx_clients_segment_id`) para acelerar el cálculo de KPIs gerenciales en masa, evitando full table scans.
+- **Backend Manager (Go):** Se desacopló la lógica creando `internal/models/note.go` y `dashboard.go`. Se implementaron consultas de agregación en `postgres.go`. Se desarrolló el `DashboardService`, se diseñó el endpoint con inyección de dependencias y Mocks, asegurando tests unitarios (`dashboard_test.go`) eficientes y limpios.
+- **Frontend Manager (React):** Atendiendo al feedback sobre inestabilidad de librerías externas en la iteración previa, el agente evitó la instalación de componentes complejos de ShadCN. En su lugar, armó el `DashboardMetrics.tsx` (cards de métricas gerenciales) y `NotesTimeline.tsx` (historial cronológico) usando **Tailwind CSS puro** para mayor confiabilidad en la compilación.
+- **UX Dinámica:** Se implementó una **Revalidación Optimista** con `React Query`. La función `useAddClientNote` invalida la caché local (`["client_notes"]`) de forma silenciosa tras guardar una nota, logrando que el modal muestre la actualización en tiempo real sin recargar la pantalla.
+
+**Reflexión del Desarrollador:**
+- El agente de arquitectura de base de datos cumplio con lo esperado, implementando correctamente los cambios sugeridos.
+- Se implementó un entorno robusto de pruebas para el Frontend usando vitest. Esto cubre flujos fundamentales del usuario sin enfocarse excesivamente en minucias visuales, cumpliendo con la directiva arquitectónica.

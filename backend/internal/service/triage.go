@@ -8,7 +8,7 @@ import (
 	"github.com/northwind/debts-manager/backend/internal/repository"
 )
 
-type TriageService struct{
+type TriageService struct {
 	repo *repository.Repository
 }
 

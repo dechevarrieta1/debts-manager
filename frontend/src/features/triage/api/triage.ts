@@ -71,3 +71,51 @@ export const useUpdateSegment = (clientId: string) => {
     },
   });
 };
+
+export interface ClientNote {
+  id: string;
+  client_id: string;
+  content: string;
+  created_at: string;
+}
+
+export interface DashboardKPIs {
+  total_overdue_debt: number;
+  at_risk_debt: number;
+  top_debtors: Client[];
+}
+
+export const useDashboardKPIs = () => {
+  return useQuery({
+    queryKey: ["dashboard", "kpis"],
+    queryFn: async () => {
+      const response = await api.get<{ data: DashboardKPIs }>("/dashboard/kpis");
+      return response.data.data;
+    },
+  });
+};
+
+export const useClientNotes = (clientId: string) => {
+  return useQuery({
+    queryKey: ["client_notes", clientId],
+    queryFn: async () => {
+      const response = await api.get<{ data: ClientNote[] }>(`/clients/${clientId}/notes`);
+      return response.data.data;
+    },
+    enabled: !!clientId,
+  });
+};
+
+export const useAddClientNote = (clientId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (content: string) => {
+      const response = await api.post(`/clients/${clientId}/notes`, { content });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["client_notes", clientId] });
+    },
+  });
+};
