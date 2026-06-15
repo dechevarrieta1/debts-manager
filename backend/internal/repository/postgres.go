@@ -15,8 +15,8 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetClientsWithDebt() ([]models.Client, error) {
-	query := `
+func (r *Repository) GetClientsWithDebt(segment string) ([]models.Client, error) {
+	baseQuery := `
 		SELECT 
 			c.id, c.name, c.segment, c.service_status,
 			COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'pendiente'), 0) as total_debt,
@@ -25,11 +25,19 @@ func (r *Repository) GetClientsWithDebt() ([]models.Client, error) {
 			(SELECT action_date FROM collection_actions ca WHERE ca.client_id = c.id ORDER BY action_date DESC LIMIT 1) as latest_action_date
 		FROM clients c
 		LEFT JOIN invoices i ON c.id = i.client_id
-		GROUP BY c.id
-		HAVING COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'pendiente'), 0) > 0
 	`
+	
+	var rows *sql.Rows
+	var err error
 
-	rows, err := r.db.Query(query)
+	if segment != "todos" && segment != "" {
+		query := baseQuery + ` WHERE c.segment = $1 GROUP BY c.id HAVING COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'pendiente'), 0) > 0`
+		rows, err = r.db.Query(query, segment)
+	} else {
+		query := baseQuery + ` GROUP BY c.id HAVING COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'pendiente'), 0) > 0`
+		rows, err = r.db.Query(query)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -162,4 +170,39 @@ func (r *Repository) GetTopDebtors(limit int) ([]models.Client, error) {
 		clients = append(clients, c)
 	}
 	return clients, nil
+}
+
+// -- Seed Data --
+func (r *Repository) SeedFromCSV(clients []models.SeedClient) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback() // Rollback is safe to call if already committed
+
+	for _, client := range clients {
+		var clientID string
+		err := tx.QueryRow(`
+			INSERT INTO clients (name, segment, service_status) 
+			VALUES ($1, $2, $3) RETURNING id`,
+			client.Name, client.Segment, client.ServiceStatus,
+		).Scan(&clientID)
+		
+		if err != nil {
+			return err
+		}
+
+		for _, inv := range client.Invoices {
+			_, err = tx.Exec(`
+				INSERT INTO invoices (client_id, amount, due_date, status)
+				VALUES ($1, $2, $3, $4)`,
+				clientID, inv.Amount, inv.DueDate.Format("2006-01-02"), inv.Status,
+			)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return tx.Commit()
 }

@@ -10,7 +10,7 @@ export function DashboardView() {
   const [page, setPage] = useState(1);
   const [segmentFilter, setSegmentFilter] = useState("todos");
   const limit = 10;
-  const { data, isLoading, isError, error, isPlaceholderData } = useTriageClients(page, limit);
+  const { data, isLoading, isError, error, isPlaceholderData } = useTriageClients(page, limit, segmentFilter);
 
   if (isLoading) {
     return (
@@ -31,8 +31,7 @@ export function DashboardView() {
     );
   }
 
-  const allClients = data?.items || [];
-  const clients = allClients.filter(c => segmentFilter === "todos" || c.segment === segmentFilter);
+  const clients = data?.items || [];
   const total = data?.total || 0;
   const totalPages = Math.ceil(total / limit) || 1;
 
@@ -45,10 +44,13 @@ export function DashboardView() {
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-slate-500" />
-            <span className="text-sm font-medium text-slate-700">Filtro Rápido (Página Actual)</span>
+            <span className="text-sm font-medium text-slate-700">Filtro Rápido</span>
           </div>
           <div className="w-48">
-            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+            <Select value={segmentFilter} onValueChange={(val) => {
+              setSegmentFilter(val);
+              setPage(1);
+            }}>
               <SelectTrigger className="bg-white border-slate-300 text-slate-900 h-8 text-sm">
                 <SelectValue placeholder="Segmento" />
               </SelectTrigger>
@@ -68,7 +70,7 @@ export function DashboardView() {
         {/* Pagination Controls */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
           <div className="text-sm text-slate-500">
-            Mostrando <span className="font-medium text-slate-900">{allClients.length ? (page - 1) * limit + 1 : 0}</span> a <span className="font-medium text-slate-900">{Math.min(page * limit, total)}</span> de <span className="font-medium text-slate-900">{total}</span> clientes
+            Mostrando <span className="font-medium text-slate-900">{clients.length ? (page - 1) * limit + 1 : 0}</span> a <span className="font-medium text-slate-900">{Math.min(page * limit, total)}</span> de <span className="font-medium text-slate-900">{total}</span> clientes
           </div>
           <div className="flex items-center gap-2">
             <Button

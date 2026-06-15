@@ -31,7 +31,8 @@ func main() {
 	triageSvc := service.NewTriageService(repo)
 	noteSvc := service.NewNoteService(repo)
 	dashSvc := service.NewDashboardService(repo)
-	h := handler.NewAPIHandler(repo, triageSvc, noteSvc, dashSvc)
+	seedSvc := service.NewSeedService(repo)
+	h := handler.NewAPIHandler(repo, triageSvc, noteSvc, dashSvc, seedSvc)
 
 	mux := http.NewServeMux()
 
@@ -41,6 +42,7 @@ func main() {
 	mux.HandleFunc("GET /api/v1/clients/{id}/notes", h.GetClientNotes)
 	mux.HandleFunc("POST /api/v1/clients/{id}/notes", h.PostClientNote)
 	mux.HandleFunc("GET /api/v1/dashboard/kpis", h.GetDashboardKPIs)
+	mux.HandleFunc("POST /api/v1/seed/upload", h.HandleUploadSeed)
 
 	port := os.Getenv("PORT")
 	if port == "" {

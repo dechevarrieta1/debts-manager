@@ -33,11 +33,11 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export const useTriageClients = (page = 1, limit = 10) => {
+export const useTriageClients = (page = 1, limit = 10, segment = "todos") => {
   return useQuery({
-    queryKey: ["triage", "clients", page, limit],
+    queryKey: ["triage", "clients", page, limit, segment],
     queryFn: async () => {
-      const response = await api.get<PaginatedResponse<Client>>(`/debts/triage?page=${page}&limit=${limit}`);
+      const response = await api.get<PaginatedResponse<Client>>(`/debts/triage?page=${page}&limit=${limit}&segment=${segment}`);
       return response.data.data;
     },
     placeholderData: (prev) => prev,

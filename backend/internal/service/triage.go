@@ -60,8 +60,8 @@ func (s *TriageService) PrioritizeClients(clients []models.Client) []models.Clie
 	return clients
 }
 
-func (s *TriageService) GetTriagedClients(page, limit int) ([]models.Client, int, error) {
-	clients, err := s.repo.GetClientsWithDebt()
+func (s *TriageService) GetTriagedClients(page, limit int, segment string) ([]models.Client, int, error) {
+	clients, err := s.repo.GetClientsWithDebt(segment)
 	if err != nil {
 		return nil, 0, err
 	}
