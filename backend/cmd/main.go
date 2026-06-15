@@ -1,0 +1,56 @@
+package main
+
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	"github.com/northwind/debts-manager/backend/infraestructure/database"
+	middleware "github.com/northwind/debts-manager/backend/infraestructure/http"
+	"github.com/northwind/debts-manager/backend/internal/handler"
+	"github.com/northwind/debts-manager/backend/internal/repository"
+	"github.com/northwind/debts-manager/backend/internal/service"
+)
+
+func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No se pudo cargar .env")
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatalf("[ERROR][main] conectando a la base de datos: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewRepository(db)
+	triageSvc := service.NewTriageService(repo)
+	noteSvc := service.NewNoteService(repo)
+	dashSvc := service.NewDashboardService(repo)
+	seedSvc := service.NewSeedService(repo)
+	h := handler.NewAPIHandler(repo, triageSvc, noteSvc, dashSvc, seedSvc)
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /api/v1/debts/triage", h.GetTriage)
+	mux.HandleFunc("POST /api/v1/clients/{id}/actions", h.PostCollectionAction)
+	mux.HandleFunc("PUT /api/v1/clients/{id}/segment", h.PutClientSegment)
+	mux.HandleFunc("GET /api/v1/clients/{id}/notes", h.GetClientNotes)
+	mux.HandleFunc("POST /api/v1/clients/{id}/notes", h.PostClientNote)
+	mux.HandleFunc("GET /api/v1/dashboard/kpis", h.GetDashboardKPIs)
+	mux.HandleFunc("POST /api/v1/seed/upload", h.HandleUploadSeed)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Server starting on port %s", port)
+	if err := http.ListenAndServe(":"+port, middleware.CORS(mux)); err != nil {
+		log.Fatalf("Server error: %v", err)
+	}
+}
