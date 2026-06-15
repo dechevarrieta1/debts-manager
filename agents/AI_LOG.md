@@ -93,5 +93,6 @@ Segundo update:
 - **UX Dinámica:** Se implementó una **Revalidación Optimista** con `React Query`. La función `useAddClientNote` invalida la caché local (`["client_notes"]`) de forma silenciosa tras guardar una nota, logrando que el modal muestre la actualización en tiempo real sin recargar la pantalla.
 
 **Reflexión del Desarrollador:**
-- El agente de arquitectura de base de datos cumplio con lo esperado, implementando correctamente los cambios sugeridos.
-- Se implementó un entorno robusto de pruebas para el Frontend usando vitest. Esto cubre flujos fundamentales del usuario sin enfocarse excesivamente en minucias visuales, cumpliendo con la directiva arquitectónica.
+- Se implementó un entorno de pruebas para el Frontend usando vitest. Esto cubre flujos fundamentales del usuario sin enfocarse excesivamente en minucias visuales, cumpliendo con la directiva arquitectónica.
+- Se implementó un generador de CSV sintético que procesa e inserta facturas y clientes bajo una transacción SQL.
+- Se corrigió el problema de UX donde la paginación y el filtro de segmento chocaban.
