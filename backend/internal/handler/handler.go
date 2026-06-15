@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/northwind/debts-manager/backend/internal/models"
 	"github.com/northwind/debts-manager/backend/internal/repository"
@@ -20,14 +21,31 @@ func NewAPIHandler(repo *repository.Repository, service *service.TriageService) 
 }
 
 func (h *APIHandler) GetTriage(w http.ResponseWriter, r *http.Request) {
-	clients, err := h.repo.GetClientsWithDebt()
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+
+	page := 1
+	limit := 10
+
+	if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+		page = p
+	}
+	if l, err := strconv.Atoi(limitStr); err == nil && l > 0 {
+		limit = l
+	}
+
+	clients, total, err := h.service.GetTriagedClients(page, limit)
 	if err != nil {
-		httpjson.Error(w, http.StatusInternalServerError, "Failed to get clients: "+err.Error())
+		httpjson.Error(w, http.StatusInternalServerError, "Failed to process triage: "+err.Error())
 		return
 	}
 
-	triagedClients := h.service.PrioritizeClients(clients)
-	httpjson.JSON(w, http.StatusOK, triagedClients)
+	httpjson.Success(w, http.StatusOK, map[string]any{
+		"items": clients,
+		"total": total,
+		"page":  page,
+		"limit": limit,
+	})
 }
 
 func (h *APIHandler) PostCollectionAction(w http.ResponseWriter, r *http.Request) {

@@ -24,13 +24,23 @@ export interface CollectionActionRequest {
   promise_date?: string;
 }
 
-export const useTriageClients = () => {
+export interface PaginatedResponse<T> {
+  data: {
+    items: T[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
+export const useTriageClients = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ["triage", "clients"],
+    queryKey: ["triage", "clients", page, limit],
     queryFn: async () => {
-      const response = await api.get<Client[]>("/debts/triage");
-      return response.data;
+      const response = await api.get<PaginatedResponse<Client>>(`/debts/triage?page=${page}&limit=${limit}`);
+      return response.data.data;
     },
+    placeholderData: (prev) => prev,
   });
 };
 

@@ -28,7 +28,7 @@ func main() {
 	defer db.Close()
 
 	repo := repository.NewRepository(db)
-	svc := service.NewTriageService()
+	svc := service.NewTriageService(repo)
 	h := handler.NewAPIHandler(repo, svc)
 
 	mux := http.NewServeMux()

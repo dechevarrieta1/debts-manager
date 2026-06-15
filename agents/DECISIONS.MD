@@ -25,3 +25,13 @@ Este documento registra las decisiones arquitectónicas y de producto más impor
 ## 5. Decisiones de Stack Tecnológico (Backend y Frontend)
 **Decisión:** Se utilizará un backend relacional (PostgreSQL) y React en el frontend, priorizando la estructura sobre la estética excesiva.
 **Por qué:** Una base de datos relacional es ideal para modelar entidades interconectadas (Clientes -> Facturas -> Gestiones). React permite componentes reutilizables para listas y formularios de forma rápida. Nos enfocaremos en que los estados de carga y error existan y sean claros (UX funcional), en lugar de animaciones y diseño Pixel-Perfect.
+
+## 6. Registro Simple de Gestión (Log de Notas)
+**Decisión:** Implementar un registro de texto cronológico asociado a cada cliente para documentar las interacciones manuales.
+**Por qué:** Al existir dos analistas en el equipo, es vital prevenir el trabajo duplicado (llamar al mismo cliente dos veces). Una simple tabla relacional de notas aporta alto valor operativo y de coordinación con un esfuerzo de desarrollo mínimo, completando el flujo del triaje.
+**Qué dejamos fuera:** Sistemas complejos de ticketing, notificaciones de seguimiento programadas o asignación de tareas con fechas límite entre usuarios.
+
+## 7. Mini-Dashboard de Visibilidad Gerencial
+**Decisión:** Incluir tres KPIs estratégicos (Deuda Total Vencida, Deuda en Riesgo, Top 3 Deudores) en la vista principal, calculados en tiempo real.
+**Por qué:** Resuelve directamente la inquietud de la CEO sobre la falta de visibilidad respecto al aumento de la mora. Utilizando consultas de agregación SQL sobre el modelo de datos existente, entregamos valor estratégico y contexto inmediato sin requerir herramientas analíticas externas.
+**Qué dejamos fuera:** Gráficos históricos de evolución de mora, filtros complejos por rango de fechas o exportación de reportes a PDF/Excel.
