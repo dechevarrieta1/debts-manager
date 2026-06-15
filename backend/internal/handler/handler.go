@@ -12,12 +12,14 @@ import (
 )
 
 type APIHandler struct {
-	repo    *repository.Repository
-	service *service.TriageService
+	repo      *repository.Repository
+	triageSvc *service.TriageService
+	noteSvc   *service.NoteService
+	dashSvc   *service.DashboardService
 }
 
-func NewAPIHandler(repo *repository.Repository, service *service.TriageService) *APIHandler {
-	return &APIHandler{repo: repo, service: service}
+func NewAPIHandler(repo *repository.Repository, triageSvc *service.TriageService, noteSvc *service.NoteService, dashSvc *service.DashboardService) *APIHandler {
+	return &APIHandler{repo: repo, triageSvc: triageSvc, noteSvc: noteSvc, dashSvc: dashSvc}
 }
 
 func (h *APIHandler) GetTriage(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +36,7 @@ func (h *APIHandler) GetTriage(w http.ResponseWriter, r *http.Request) {
 		limit = l
 	}
 
-	clients, total, err := h.service.GetTriagedClients(page, limit)
+	clients, total, err := h.triageSvc.GetTriagedClients(page, limit)
 	if err != nil {
 		httpjson.Error(w, http.StatusInternalServerError, "Failed to process triage: "+err.Error())
 		return
@@ -88,5 +90,58 @@ func (h *APIHandler) PutClientSegment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpjson.JSON(w, http.StatusOK, map[string]string{"message": "Segment updated successfully"})
+	httpjson.Success(w, http.StatusOK, map[string]string{"message": "segment updated successfully"})
+}
+
+// -- Notes --
+
+func (h *APIHandler) GetClientNotes(w http.ResponseWriter, r *http.Request) {
+	clientID := r.PathValue("id")
+	if clientID == "" {
+		httpjson.Error(w, http.StatusBadRequest, "Missing client id")
+		return
+	}
+
+	notes, err := h.noteSvc.GetNotes(clientID)
+	if err != nil {
+		httpjson.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	httpjson.Success(w, http.StatusOK, notes)
+}
+
+func (h *APIHandler) PostClientNote(w http.ResponseWriter, r *http.Request) {
+	clientID := r.PathValue("id")
+	if clientID == "" {
+		httpjson.Error(w, http.StatusBadRequest, "Missing client id")
+		return
+	}
+
+	var req struct {
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		httpjson.Error(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	note, err := h.noteSvc.AddNote(clientID, req.Content)
+	if err != nil {
+		httpjson.Error(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	httpjson.Success(w, http.StatusCreated, note)
+}
+
+// -- KPIs --
+
+func (h *APIHandler) GetDashboardKPIs(w http.ResponseWriter, r *http.Request) {
+	kpis, err := h.dashSvc.GetKPIs()
+	if err != nil {
+		httpjson.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	httpjson.Success(w, http.StatusOK, kpis)
 }

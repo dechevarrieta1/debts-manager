@@ -8,7 +8,7 @@ import (
 )
 
 func TestPrioritizeClients(testingT *testing.T) {
-	svc := NewTriageService()
+	svc := NewTriageService(nil)
 	now := time.Now()
 	recentDate := now.Add(-24 * time.Hour)
 

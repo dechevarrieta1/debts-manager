@@ -28,14 +28,19 @@ func main() {
 	defer db.Close()
 
 	repo := repository.NewRepository(db)
-	svc := service.NewTriageService(repo)
-	h := handler.NewAPIHandler(repo, svc)
+	triageSvc := service.NewTriageService(repo)
+	noteSvc := service.NewNoteService(repo)
+	dashSvc := service.NewDashboardService(repo)
+	h := handler.NewAPIHandler(repo, triageSvc, noteSvc, dashSvc)
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/v1/debts/triage", h.GetTriage)
 	mux.HandleFunc("POST /api/v1/clients/{id}/actions", h.PostCollectionAction)
 	mux.HandleFunc("PUT /api/v1/clients/{id}/segment", h.PutClientSegment)
+	mux.HandleFunc("GET /api/v1/clients/{id}/notes", h.GetClientNotes)
+	mux.HandleFunc("POST /api/v1/clients/{id}/notes", h.PostClientNote)
+	mux.HandleFunc("GET /api/v1/dashboard/kpis", h.GetDashboardKPIs)
 
 	port := os.Getenv("PORT")
 	if port == "" {

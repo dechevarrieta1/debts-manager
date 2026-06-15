@@ -83,3 +83,83 @@ func (r *Repository) UpdateClientSegment(clientID string, segment models.Segment
 	}
 	return nil
 }
+
+// -- Notes --
+
+func (r *Repository) CreateClientNote(note *models.ClientNote) error {
+	query := `INSERT INTO client_notes (client_id, content) VALUES ($1, $2) RETURNING id, created_at`
+	return r.db.QueryRow(query, note.ClientID, note.Content).Scan(&note.ID, &note.CreatedAt)
+}
+
+func (r *Repository) GetClientNotes(clientID string) ([]models.ClientNote, error) {
+	query := `SELECT id, client_id, content, created_at FROM client_notes WHERE client_id = $1 ORDER BY created_at DESC`
+	rows, err := r.db.Query(query, clientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var notes []models.ClientNote
+	for rows.Next() {
+		var n models.ClientNote
+		if err := rows.Scan(&n.ID, &n.ClientID, &n.Content, &n.CreatedAt); err != nil {
+			return nil, err
+		}
+		notes = append(notes, n)
+	}
+	return notes, nil
+}
+
+// -- KPIs --
+
+func (r *Repository) GetTotalOverdueDebt() (float64, error) {
+	var total sql.NullFloat64
+	err := r.db.QueryRow(`SELECT SUM(amount) FROM invoices WHERE status = 'vencida'`).Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+	return total.Float64, nil
+}
+
+func (r *Repository) GetAtRiskDebt() (float64, error) {
+	var total sql.NullFloat64
+	query := `
+		SELECT SUM(i.amount) 
+		FROM invoices i 
+		JOIN clients c ON i.client_id = c.id 
+		WHERE i.status = 'vencida' AND c.segment IN ('zombi', 'startup')
+	`
+	err := r.db.QueryRow(query).Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+	return total.Float64, nil
+}
+
+func (r *Repository) GetTopDebtors(limit int) ([]models.Client, error) {
+	query := `
+		SELECT c.id, c.name, c.segment, c.service_status,
+		       COALESCE(SUM(i.amount), 0) as total_debt
+		FROM clients c
+		JOIN invoices i ON c.id = i.client_id
+		WHERE i.status IN ('pendiente', 'vencida')
+		GROUP BY c.id
+		ORDER BY total_debt DESC
+		LIMIT $1
+	`
+	rows, err := r.db.Query(query, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var clients []models.Client
+	for rows.Next() {
+		var c models.Client
+		if err := rows.Scan(&c.ID, &c.Name, &c.Segment, &c.ServiceStatus, &c.TotalDebt); err != nil {
+			return nil, err
+		}
+		clients = append(clients, c)
+	}
+	return clients, nil
+}
