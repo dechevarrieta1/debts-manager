@@ -110,7 +110,8 @@ Si deseas verificar la robustez de los componentes visuales e interactivos de la
    ```
 > Esto validará componentes críticos como el filtrado, los modals y la interacción simulada del usuario.
 
-Por otro lado, para validar la lógica del negocio central en el servidor, el Backend incluye pruebas nativas de **Go**:
+
+> Por otro lado, para validar la lógica del negocio central en el servidor, el Backend incluye pruebas nativas de **Go**:
 
 1. Desde la carpeta `backend`, ejecuta los tests unitarios con:
    ```bash
