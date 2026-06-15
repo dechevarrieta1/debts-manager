@@ -1,4 +1,4 @@
-import { type Client } from "../api/triage";
+import { type Client } from "../service/triage";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

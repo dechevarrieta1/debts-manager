@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DashboardView } from './DashboardView';
-import * as triageApi from '../api/triage';
+import * as triageApi from '../service/triage';
 
 // Mock de todo el módulo de API para no golpear la red
 vi.mock('../api/triage', () => ({

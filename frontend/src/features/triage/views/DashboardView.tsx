@@ -1,4 +1,4 @@
-import { useTriageClients } from "../api/triage";
+import { useTriageClients } from "../service/triage";
 import { TriageTable } from "../components/TriageTable";
 import { DashboardMetrics } from "../components/DashboardMetrics";
 import { Loader2, AlertCircle, ChevronLeft, ChevronRight, Filter } from "lucide-react";
@@ -39,7 +39,7 @@ export function DashboardView() {
     <div className="grid gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <DashboardMetrics />
       <div className={`rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-opacity duration-200 ${isPlaceholderData ? 'opacity-50' : 'opacity-100'}`}>
-        
+
         {/* Filter Toolbar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export function DashboardView() {
         </div>
 
         <TriageTable clients={clients} />
-        
+
         {/* Pagination Controls */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
           <div className="text-sm text-slate-500">

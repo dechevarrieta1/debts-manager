@@ -1,4 +1,4 @@
-import { useDashboardKPIs } from "../api/triage";
+import { useDashboardKPIs } from "../service/triage";
 import { AlertCircle, TrendingUp, AlertTriangle, Users } from "lucide-react";
 
 export function DashboardMetrics() {
@@ -27,7 +27,7 @@ export function DashboardMetrics() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
-      
+
       {/* Total Overdue Debt */}
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -76,17 +76,17 @@ export function DashboardMetrics() {
           </div>
           <div className="space-y-3 flex-1 flex flex-col justify-center">
             {kpis.top_debtors && kpis.top_debtors.length > 0 ? (
-               kpis.top_debtors.map((client, idx) => (
-                 <div key={client.id} className="flex items-center justify-between">
-                   <div className="flex items-center space-x-2 truncate">
-                     <span className="text-xs font-mono text-slate-400">#{idx + 1}</span>
-                     <span className="text-sm font-medium text-slate-800 truncate">{client.name}</span>
-                   </div>
-                   <span className="text-sm font-mono text-slate-500">
-                     ${client.total_debt.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-                   </span>
-                 </div>
-               ))
+              kpis.top_debtors.map((client, idx) => (
+                <div key={client.id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 truncate">
+                    <span className="text-xs font-mono text-slate-400">#{idx + 1}</span>
+                    <span className="text-sm font-medium text-slate-800 truncate">{client.name}</span>
+                  </div>
+                  <span className="text-sm font-mono text-slate-500">
+                    ${client.total_debt.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+              ))
             ) : (
               <span className="text-sm text-slate-400">Sin deudores vencidos</span>
             )}

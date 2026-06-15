@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ActionModal } from './ActionModal';
-import * as triageApi from '../api/triage';
+import * as triageApi from '../service/triage';
 
 // Mock del API
 vi.mock('../api/triage', () => ({
@@ -47,7 +47,7 @@ describe('ActionModal - Mutaciones y Formulario', () => {
 
     // Verifica la renderización de datos
     expect(screen.getByText(/Acme Corp/i)).toBeInTheDocument();
-    
+
     // El estado por defecto es "Llamada Realizada" en Select, el textarea está vacío.
     // Llenamos la nota interna:
     const textarea = screen.getByPlaceholderText(/Ej. El cliente solicitó/i);

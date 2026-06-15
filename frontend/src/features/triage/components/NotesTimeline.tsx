@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useClientNotes, useAddClientNote } from "../api/triage";
+import { useClientNotes, useAddClientNote } from "../service/triage";
 import { Loader2, MessageSquare, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
