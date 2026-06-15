@@ -44,3 +44,10 @@ Table collection_actions {
   action_date timestamptz [default: `now()`, not null]
   promise_date date
 }
+
+Table client_notes {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  client_id uuid [ref: > clients.id, not null]
+  content text [not null]
+  created_at timestamptz [default: `now()`, not null]
+}

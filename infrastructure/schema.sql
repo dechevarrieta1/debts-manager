@@ -43,3 +43,19 @@ CREATE TABLE collection_actions (
 
 CREATE INDEX idx_collection_actions_client_id ON collection_actions(client_id);
 CREATE INDEX idx_collection_actions_action_date ON collection_actions(action_date DESC);
+
+-- 6. Tabla de Notas del Cliente
+CREATE TABLE client_notes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+-- Índices Específicos para Notas
+CREATE INDEX idx_client_notes_client_id ON client_notes(client_id);
+CREATE INDEX idx_client_notes_created_at ON client_notes(created_at DESC);
+
+-- Índices Específicos para KPIs Gerenciales (Suma de facturas vencidas y Deuda en Riesgo)
+CREATE INDEX idx_invoices_status_amount ON invoices(status) INCLUDE (amount);
+CREATE INDEX idx_clients_segment_id ON clients(segment, id);
