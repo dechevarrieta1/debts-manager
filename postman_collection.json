@@ -1,0 +1,229 @@
+{
+	"info": {
+		"name": "Northwind Triage API",
+		"description": "Colección oficial para probar todos los endpoints del MVP de Northwind Triage.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Dashboard KPIs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dashboard/kpis",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"kpis"
+					]
+				},
+				"description": "Obtiene las métricas concurrentes del tablero (Deuda vencida total, deuda en riesgo y el top 3 deudores)."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Listar Triaje (Clientes Priorizados)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/debts/triage?page=1&limit=10&segment=todos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"debts",
+						"triage"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Página actual (por defecto 1)"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Clientes por página (por defecto 10)"
+						},
+						{
+							"key": "segment",
+							"value": "todos",
+							"description": "Filtro de segmento (todos, zombi, startup, grande, estandar)"
+						}
+					]
+				},
+				"description": "Retorna los clientes filtrados y paginados, estrictamente ordenados por prioridad de triaje."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Actualizar Segmento de Cliente",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"segment\": \"zombi\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/clients/{{client_id}}/segment",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"clients",
+						"{{client_id}}",
+						"segment"
+					]
+				},
+				"description": "Actualiza el segmento comercial del cliente (afectando a su prioridad)."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Obtener Notas del Cliente",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/clients/{{client_id}}/notes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"clients",
+						"{{client_id}}",
+						"notes"
+					]
+				},
+				"description": "Lista el historial cronológico de todas las notas o interacciones del cliente."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Agregar Nueva Nota",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"El cliente solicitó un nuevo plazo de pago para la semana que viene.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/clients/{{client_id}}/notes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"clients",
+						"{{client_id}}",
+						"notes"
+					]
+				},
+				"description": "Guarda una nota de texto libre en el historial del cliente."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Registrar Gestión de Cobranza (Acción)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"collection_status\": \"Promesa de Pago\",\n    \"note\": \"Se contactó exitosamente con contaduría y prometieron abonar en 5 días.\",\n    \"promise_date\": \"2026-10-15\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/clients/{{client_id}}/actions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"clients",
+						"{{client_id}}",
+						"actions"
+					]
+				},
+				"description": "Registra una acción de cobranza oficial. Si el estatus es 'Promesa de Pago', se envía `promise_date`. Automáticamente también guarda un registro en Notas (`client_notes`)."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Seed - Carga de CSV",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "mock_data.csv",
+							"description": "Sube el archivo mock_data.csv generado localmente"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/seed/upload",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"seed",
+						"upload"
+					]
+				},
+				"description": "Endpoint masivo transaccional para cargar facturas y clientes vía archivo CSV. "
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "b9a528cc-4d37-4b71-b062-817ab56f8f11",
+			"type": "string",
+			"description": "Reemplaza esto con un UUID válido que te retorne el Endpoint 'Listar Triaje'"
+		}
+	]
+}
